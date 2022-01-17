@@ -211,48 +211,43 @@ function onSubmit(e){
 
   const exportBtn = document.querySelector('#exportBtn');
   const importBtn = document.querySelector('#importBtn');
-  const textareaRef = document.querySelector('.textarea');
+  const input = document.querySelector('#inputFile');
+  const textareaRef = document.querySelector('#textArea');
   exportBtn.addEventListener('click', exportJSON);
-  importBtn.addEventListener('click', importJSON);
+  // importBtn.addEventListener('click', exportJSON);
+  input.addEventListener('change', importJSON);
 
   function exportData(table){
     const data = [];
-    const headers = [];
-    // for (let i = 0; i<table.rows[0].cells.length; i = i+1){
-    //   headers[i] = table.rows[0].cells[i].innerHTML.toLowerCase()
-        // .replace(/ /gi,'')
-      // console.log(headers[i] )
-    // }
     for (let i = 1; i<table.rows.length; i = i+1){
       const tableRow = table.rows[i];
       let rowData = [];
       for (let j = 1; j<tableRow.cells.length; j = j+1){
         rowData.push(tableRow.cells[j].innerHTML) ;
-        // console.log(headers[i] )
-        console.log(rowData)
       }
       data.push(rowData);
     }
-
     return data;
-  };
+  }
 
   function exportJSON(){
     const data = JSON.stringify(exportData(refs.table));
     textareaRef.value = data;
-    // console.dir(refs.table)
-    // const table = refs.table;
-    // for (let i = 0; i<table.rows.length; i = i+1) {
-    //   console.log(i)
-    // }
   }
 
-
-  function importJSON(){
-    const data = JSON.parse(textareaRef.value)
-    data.map(item=>{
-      console.log(item)
-    })
+  function importJSON(e){
+    console.log(e.target)
+    const file = e.target.files[0];
+    console.log(file)
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const contents = e.target.result;
+      textareaRef.value = contents;
+    };
+    reader.readAsText(file);
   }
 
   refs.columnInput.value = '';
@@ -266,16 +261,16 @@ function createTextArea(){
 
   const textArea = document.createElement('textarea');
   textArea.classList.add('textarea');
+  textArea.id = 'textArea';
   textArea.rows = 6;
 
   const btnBox = document.createElement('div');
   btnBox.classList.add('btnBox')
 
-  const importBtn = document.createElement('button');
-  importBtn.type = 'button';
-  importBtn.id = 'importBtn';
-  importBtn.classList.add( 'importBtn');
-  importBtn.textContent = 'IMPORT';
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.id = 'inputFile';
+  input.classList.add( 'inputFile');
 
   const exportBtn = document.createElement('button');
   exportBtn.type = 'button';
@@ -283,7 +278,14 @@ function createTextArea(){
   exportBtn.classList.add( 'exportBtn');
   exportBtn.textContent = 'EXPORT';
 
-  btnBox.append(exportBtn, importBtn)
+  const importBtn = document.createElement('button');
+  importBtn.type = 'button';
+  importBtn.setAttribute('onclick',`document.getElementById('inputFile').click()`);
+  importBtn.id = 'importBtn';
+  importBtn.classList.add( 'importBtn');
+  importBtn.textContent = 'IMPORT';
+
+  btnBox.append(exportBtn, importBtn, input)
   divBox.append(textArea, btnBox);
   refs.container.appendChild(divBox);
 }

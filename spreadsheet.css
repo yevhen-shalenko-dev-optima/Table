@@ -87,3 +87,7 @@
 .exportBtn{
     margin-right: 30px;
 }
+
+.inputFile{
+    display: none;
+}
