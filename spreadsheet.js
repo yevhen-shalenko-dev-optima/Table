@@ -236,9 +236,9 @@ function onSubmit(e){
   }
 
   function importJSON(e){
-    console.log(e.target)
+    // console.log(e.target)
     const file = e.target.files[0];
-    console.log(file)
+    // console.log(file)
     if (!file) {
       return;
     }
