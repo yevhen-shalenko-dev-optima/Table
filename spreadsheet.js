@@ -218,14 +218,18 @@ function onSubmit(e){
   function exportData(table){
     const data = [];
     const headers = [];
-    for (let i = 0; i<table.rows[0].cells.length; i = i+1){
-      headers[i] = table.rows[0].cells[i].innerHTML.toLowerCase().replace(/ /gi,'')
-    }
-    for (let i = 0; i<table.rows.length; i = i+1){
+    // for (let i = 0; i<table.rows[0].cells.length; i = i+1){
+    //   headers[i] = table.rows[0].cells[i].innerHTML.toLowerCase()
+        // .replace(/ /gi,'')
+      // console.log(headers[i] )
+    // }
+    for (let i = 1; i<table.rows.length; i = i+1){
       const tableRow = table.rows[i];
-      const rowData = {};
-      for (let j = 0; j<tableRow.cells.length; j = j+1){
-        rowData[ headers[j] ] = tableRow.cells[j].innerHTML;
+      let rowData = [];
+      for (let j = 1; j<tableRow.cells.length; j = j+1){
+        rowData.push(tableRow.cells[j].innerHTML) ;
+        // console.log(headers[i] )
+        console.log(rowData)
       }
       data.push(rowData);
     }
@@ -236,6 +240,11 @@ function onSubmit(e){
   function exportJSON(){
     const data = JSON.stringify(exportData(refs.table));
     textareaRef.value = data;
+    // console.dir(refs.table)
+    // const table = refs.table;
+    // for (let i = 0; i<table.rows.length; i = i+1) {
+    //   console.log(i)
+    // }
   }
 
 
