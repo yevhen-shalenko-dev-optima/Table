@@ -36,21 +36,27 @@
 .column-header{
     border: 1px solid #999999;
     background-color:  #CCCCCC;
-    width: 50px;
+    width: 70px;
 }
-.main-row{
+.row-number{
+    border: 1px solid #999999;
+    background-color:  #CCCCCC;
+    width: 50px;
+
+}
+.main-cell{
     border: 1px solid #999999;
     background-color:  #CCCCCC;
     width: 50px;
     text-align: center;
 }
-.row{
+.cell{
     border: 1px solid #999999;
     padding: 0;
     max-width: 68px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
 
 }
 

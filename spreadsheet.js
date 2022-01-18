@@ -6,11 +6,18 @@ const refs = {
   thead: document.querySelector('#table-headers'),
   tbody: document.querySelector('#table-body'),
   container: document.querySelector('#container'),
+  exportBtn: document.querySelector('#exportBtn'),
+  input: document.querySelector('#inputFile'),
+  textarea: document.querySelector('#textArea'),
+
+
 }
 refs.form.addEventListener('submit', onSubmit);
 window.addEventListener('click', onCellClick);
 window.addEventListener('keydown', onKeyPress);
 refs.table.addEventListener('dblclick', onCellDblClick);
+refs.exportBtn.addEventListener('click', exportJSON);
+refs.input.addEventListener('change', importJSON);
 
 let rowNumber;
 let columnNumber;
@@ -27,26 +34,33 @@ function createHeaderRow (columnNumber){
 
   for (let i = 0; i <= columnNumber; i = i+1) {
     const th = document.createElement('th');
-    th.setAttribute('id', `h-0-${i}`)
-    th.setAttribute('class',  'column-header')
-    i===0 ? th.innerHTML = '№' : th.innerHTML = `Col ${i}`
+    th.id = `h-0-${i}`;
+
+    if(i === 0){
+      th.classList.add('row-number');
+      th.innerHTML = '№';
+    }else{
+      th.classList.add('column-header');
+      th.innerHTML = `Col ${i}`
+    }
     tr.appendChild(th)
   }
   refs.thead.appendChild(tr);
 }
 
-function createTableBody(rowNumber, columnNumber){
+function createTableBody(rowNumber, columnNumber, cellValue = ''){
 
   for (let i = 0; i < rowNumber; i = i+1) {
     const tr = document.createElement('tr');
     for (let j = 0; j <= columnNumber; j = j +1){
       const td = document.createElement('td');
       if (j === 0) {
-        td.setAttribute('class', 'main-row')
+        td.classList.add('main-cell')
         td.innerHTML = `${i+1}`;
       }else{
-        td.setAttribute('class', 'row')
-        td.setAttribute('id', `row-${i+1}-col-${j}`)
+        td.classList.add('cell')
+        td.id = `row-${i+1}-col-${j}`;
+        td.innerHTML = cellValue;
       }
       tr.appendChild(td)
     }
@@ -196,6 +210,54 @@ function onKeyPress(e){
     }
 }
 
+function exportData(table){
+  const data = [];
+  for (let i = 1; i<table.rows.length; i = i+1){
+    const tableRow = table.rows[i];
+    let rowData = [];
+    for (let j = 1; j<tableRow.cells.length; j = j+1){
+      rowData.push(tableRow.cells[j].innerHTML) ;
+    }
+    data.push(rowData);
+  }
+  return data;
+}
+
+function exportJSON(){
+  const data = JSON.stringify(exportData(refs.table));
+  refs.textarea.value = data;
+}
+
+function importJSON(e){
+  const file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+
+  const read = new Promise(function(resolve) {
+    let reader = new window.FileReader();
+    reader.onload = () => {
+      refs.textarea.value = reader.result;
+      resolve(reader.result);
+    };
+    reader.readAsText(file);
+  });
+
+  read.then(value => {
+    let columnNum;
+    let rowNum;
+    const data = JSON.parse(value);
+    console.log(data.length)
+    rowNum = data.length
+    data.forEach(col=>{
+      columnNum = col.length;
+      })
+
+    createHeaderRow(columnNum)
+    createTableBody(rowNum, columnNum)
+  })
+}
+
 function onSubmit(e){
   e.preventDefault();
 
@@ -207,86 +269,9 @@ function onSubmit(e){
 
   createHeaderRow(columnNumber);
   createTableBody(rowNumber,columnNumber);
-  createTextArea();
-
-  const exportBtn = document.querySelector('#exportBtn');
-  const importBtn = document.querySelector('#importBtn');
-  const input = document.querySelector('#inputFile');
-  const textareaRef = document.querySelector('#textArea');
-  exportBtn.addEventListener('click', exportJSON);
-  // importBtn.addEventListener('click', exportJSON);
-  input.addEventListener('change', importJSON);
-
-  function exportData(table){
-    const data = [];
-    for (let i = 1; i<table.rows.length; i = i+1){
-      const tableRow = table.rows[i];
-      let rowData = [];
-      for (let j = 1; j<tableRow.cells.length; j = j+1){
-        rowData.push(tableRow.cells[j].innerHTML) ;
-      }
-      data.push(rowData);
-    }
-    return data;
-  }
-
-  function exportJSON(){
-    const data = JSON.stringify(exportData(refs.table));
-    textareaRef.value = data;
-  }
-
-  function importJSON(e){
-    // console.log(e.target)
-    const file = e.target.files[0];
-    // console.log(file)
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const contents = e.target.result;
-      textareaRef.value = contents;
-    };
-    reader.readAsText(file);
-  }
 
   refs.columnInput.value = '';
   refs.rowInput.value = '';
-
 }
 
-function createTextArea(){
-  const divBox = document.createElement('div');
-  divBox.classList.add('box')
-
-  const textArea = document.createElement('textarea');
-  textArea.classList.add('textarea');
-  textArea.id = 'textArea';
-  textArea.rows = 6;
-
-  const btnBox = document.createElement('div');
-  btnBox.classList.add('btnBox')
-
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.id = 'inputFile';
-  input.classList.add( 'inputFile');
-
-  const exportBtn = document.createElement('button');
-  exportBtn.type = 'button';
-  exportBtn.id = 'exportBtn';
-  exportBtn.classList.add( 'exportBtn');
-  exportBtn.textContent = 'EXPORT';
-
-  const importBtn = document.createElement('button');
-  importBtn.type = 'button';
-  importBtn.setAttribute('onclick',`document.getElementById('inputFile').click()`);
-  importBtn.id = 'importBtn';
-  importBtn.classList.add( 'importBtn');
-  importBtn.textContent = 'IMPORT';
-
-  btnBox.append(exportBtn, importBtn, input)
-  divBox.append(textArea, btnBox);
-  refs.container.appendChild(divBox);
-}
 

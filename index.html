@@ -49,10 +49,15 @@
                 </tbody>
             </table>
         </div>
+        <div class="box">
+            <textarea class="textarea" id="textArea" rows="6"></textarea>
+            <div class="btnBox">
+                <button type="button" class="exportBtn" id="exportBtn">Export</button>
+                <button type="button" class="importBtn" id="importBtn" onclick="document.getElementById('inputFile').click()">IMPORT</button>
+                <input type="file" class="inputFile" id="inputFile" >
+            </div>
+        </div>
     </div>
 <script src="spreadsheet.js" type="module"></script>
 </body>
 </html>
-
-
-<!--browser-sync start --server '' --files ''-->
